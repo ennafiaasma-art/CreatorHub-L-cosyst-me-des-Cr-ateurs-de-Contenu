@@ -9,12 +9,19 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckRole
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  Closure(Request): (Response)  $next
+     * Usage in routes: ->middleware('role:admin')
+     * or for several roles: ->middleware('role:admin,creator')
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
+        $user = $request->user();
+
+        if (! $user || ! in_array($user->role, $roles, true)) {
+            return response()->json([
+                'message' => 'You do not have permission to access this resource.',
+            ], 403);
+        }
+
         return $next($request);
     }
 }

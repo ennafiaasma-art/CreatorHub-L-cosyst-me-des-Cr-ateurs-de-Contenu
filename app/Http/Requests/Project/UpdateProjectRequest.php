@@ -2,28 +2,25 @@
 
 namespace App\Http\Requests\Project;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        // Ownership check happens in the controller (only the creator can update).
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'media_url' => ['sometimes', 'required', 'string', 'url'],
+            'media_type' => ['sometimes', 'required', 'string', 'in:image,video,link'],
+            'tags' => ['sometimes', 'required', 'array', 'min:1'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 }
