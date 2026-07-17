@@ -9,6 +9,15 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function jobs()
+{
+    return $this->hasMany(Job::class,'creator_id');
+}
+
+public function jobApplications()
+{
+    return $this->hasMany(JobApplication::class);
+}
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
