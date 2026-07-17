@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\JobApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,4 +54,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/tasks/{task}', [TaskController::class, 'update']);
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
     Route::patch('/tasks/{task}/move', [TaskController::class, 'move']);
+
+    Route::apiResource('jobs', JobController::class);
+
+Route::post('/jobs/{job}/apply',[
+    JobApplicationController::class,
+    'apply'
+]);
+
+Route::patch('/applications/{application}',[
+    JobApplicationController::class,
+    'updateStatus'
+]);
 });
+
