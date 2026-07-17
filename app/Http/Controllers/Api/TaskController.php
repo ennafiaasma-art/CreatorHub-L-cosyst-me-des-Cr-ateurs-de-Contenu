@@ -11,6 +11,24 @@ use App\Models\Task;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+
+/**
+ * @OA\Tag(name="Tasks", description="Kanban tasks inside a private workspace")
+ */
+class TaskController extends Controller
+{
+    /**
+     * @OA\Get(
+     *     path="/api/tasks",
+     *     tags={"Tasks"},
+     *     summary="List tasks for a workspace (members only)",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="workspace_id", in="query", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="List of tasks"),
+     *     @OA\Response(response=403, description="Not a member of this workspace")
+     * )
+     */
+    public function index(Request $request)
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 
@@ -38,6 +56,31 @@ class TaskController extends Controller
         return TaskResource::collection($tasks);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/tasks",
+     *     tags={"Tasks"},
+     *     summary="Create a task inside a workspace (members only)",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"workspace_id","title"},
+     *             @OA\Property(property="workspace_id", type="integer", example=1),
+     *             @OA\Property(property="workspace_column_id", type="integer", example=2, description="Defaults to the first column (To Do) if omitted"),
+     *             @OA\Property(property="title", type="string", example="Edit intro video"),
+     *             @OA\Property(property="description", type="string", example="Trim first 10 seconds and add logo"),
+     *             @OA\Property(property="assigned_user_id", type="integer", example=5),
+     *             @OA\Property(property="priority", type="string", enum={"low","medium","high"}),
+     *             @OA\Property(property="deadline", type="string", format="date", example="2026-08-01"),
+     *             @OA\Property(property="attachment_url", type="string", example="https://drive.google.com/...")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Task created"),
+     *     @OA\Response(response=403, description="Not a member of this workspace")
+     * )
+     */
+    public function store(StoreTaskRequest $request)
 
     /**
      * Store a newly created resource in storage.
@@ -73,6 +116,17 @@ class TaskController extends Controller
             'task' => new TaskResource($task->load(['column', 'creator', 'assignedUser'])),
         ], 201);
     }
+
+    /**
+     * @OA\Put(
+     *     path="/api/tasks/{id}",
+     *     tags={"Tasks"},
+     *     summary="Update a task (members only)",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Task updated"),
+     *     @OA\Response(response=403, description="Not a member of this workspace")
+     * )
     /**
      * Display the specified resource.
      */
@@ -110,6 +164,17 @@ class TaskController extends Controller
     }
 
     /**
+     * @OA\Delete(
+     *     path="/api/tasks/{id}",
+     *     tags={"Tasks"},
+     *     summary="Delete a task (members only)",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=204, description="Task deleted"),
+     *     @OA\Response(response=403, description="Not a member of this workspace")
+     * )
+     */
+    public function destroy(Task $task)
      * Remove the specified resource from storage.
      */
      public function destroy(Task $task)
@@ -120,6 +185,24 @@ class TaskController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * @OA\Patch(
+     *     path="/api/tasks/{id}/move",
+     *     tags={"Tasks"},
+     *     summary="Move a task to a different kanban column",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(required={"workspace_column_id"}, @OA\Property(property="workspace_column_id", type="integer", example=3))
+     *     ),
+     *     @OA\Response(response=200, description="Task moved"),
+     *     @OA\Response(response=403, description="Not a member of this workspace"),
+     *     @OA\Response(response=422, description="Column does not belong to this task's workspace")
+     * )
+     */
+    public function move(MoveTaskRequest $request, Task $task)
       public function move(MoveTaskRequest $request, Task $task)
     {
         $this->authorize('view', $task->workspace);
