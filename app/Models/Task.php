@@ -11,6 +11,9 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+    //
+        use HasFactory, SoftDeletes;
+           protected $fillable = [
         'workspace_id',
         'workspace_column_id',
         'creator_id',
@@ -24,6 +27,7 @@ class Task extends Model
     ];
 
     protected function casts(): array
+        protected function casts(): array
     {
         return [
             'deadline' => 'date',
@@ -51,3 +55,7 @@ class Task extends Model
         return $this->belongsTo(User::class, 'assigned_user_id');
     }
 }
+
+
+    
+

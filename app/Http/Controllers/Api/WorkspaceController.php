@@ -26,6 +26,17 @@ class WorkspaceController extends Controller
      * )
      */
     public function index(Request $request)
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+
+class WorkspaceController extends Controller
+{
+        use AuthorizesRequests;
+
+    /**
+     * Display a listing of the resource.
+     */
+   public function index(Request $request)
     {
         $workspaces = Workspace::query()
             ->whereHas('members', fn ($q) => $q->where('user_id', $request->user()->id))
@@ -54,6 +65,9 @@ class WorkspaceController extends Controller
      * )
      */
     public function store(StoreWorkspaceRequest $request)
+     * Store a newly created resource in storage.
+     */
+      public function store(StoreWorkspaceRequest $request)
     {
         $workspace = Workspace::create([
             ...$request->validated(),
@@ -78,6 +92,9 @@ class WorkspaceController extends Controller
      * )
      */
     public function show(Request $request, Workspace $workspace)
+     * Display the specified resource.
+     */
+     public function show(Request $request, Workspace $workspace)
     {
         $this->authorize('view', $workspace);
 
@@ -96,6 +113,9 @@ class WorkspaceController extends Controller
      * )
      */
     public function update(UpdateWorkspaceRequest $request, Workspace $workspace)
+     * Update the specified resource in storage.
+     */
+  public function update(UpdateWorkspaceRequest $request, Workspace $workspace)
     {
         $this->authorize('update', $workspace);
 
@@ -117,6 +137,8 @@ class WorkspaceController extends Controller
      *     @OA\Response(response=204, description="Workspace deleted"),
      *     @OA\Response(response=403, description="Only the owner can delete the workspace")
      * )
+    /**
+     * Remove the specified resource from storage.
      */
     public function destroy(Workspace $workspace)
     {
@@ -139,6 +161,7 @@ class WorkspaceController extends Controller
      * )
      */
     public function members(Workspace $workspace)
+      public function members(Workspace $workspace)
     {
         $this->authorize('view', $workspace);
 
@@ -164,6 +187,7 @@ class WorkspaceController extends Controller
      * )
      */
     public function addMember(AddWorkspaceMemberRequest $request, Workspace $workspace)
+      public function addMember(AddWorkspaceMemberRequest $request, Workspace $workspace)
     {
         $this->authorize('manageMembers', $workspace);
 
@@ -198,6 +222,7 @@ class WorkspaceController extends Controller
      * )
      */
     public function removeMember(Workspace $workspace, int $user)
+        public function removeMember(Workspace $workspace, int $user)
     {
         $this->authorize('manageMembers', $workspace);
 
@@ -211,4 +236,5 @@ class WorkspaceController extends Controller
 
         return response()->json(null, 204);
     }
+
 }

@@ -29,6 +29,17 @@ class TaskController extends Controller
      * )
      */
     public function index(Request $request)
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+
+class TaskController extends Controller
+{
+            use AuthorizesRequests;
+
+    /**
+     * Display a listing of the resource.
+     */
+     public function index(Request $request)
     {
         $request->validate([
             'workspace_id' => ['required', 'integer', 'exists:workspaces,id'],
@@ -70,6 +81,11 @@ class TaskController extends Controller
      * )
      */
     public function store(StoreTaskRequest $request)
+
+    /**
+     * Store a newly created resource in storage.
+     */
+       public function store(StoreTaskRequest $request)
     {
         $workspace = Workspace::findOrFail($request->workspace_id);
         $this->authorize('view', $workspace);
@@ -111,6 +127,16 @@ class TaskController extends Controller
      *     @OA\Response(response=200, description="Task updated"),
      *     @OA\Response(response=403, description="Not a member of this workspace")
      * )
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
@@ -149,6 +175,9 @@ class TaskController extends Controller
      * )
      */
     public function destroy(Task $task)
+     * Remove the specified resource from storage.
+     */
+     public function destroy(Task $task)
     {
         $this->authorize('view', $task->workspace);
 
@@ -174,6 +203,7 @@ class TaskController extends Controller
      * )
      */
     public function move(MoveTaskRequest $request, Task $task)
+      public function move(MoveTaskRequest $request, Task $task)
     {
         $this->authorize('view', $task->workspace);
 

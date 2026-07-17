@@ -11,6 +11,18 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+ public function jobs()
+{
+    return $this->hasMany(Job::class, 'creator_id');
+}
+
+public function jobApplications()
+{
+    return $this->hasMany(JobApplication::class);
+}
+
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.

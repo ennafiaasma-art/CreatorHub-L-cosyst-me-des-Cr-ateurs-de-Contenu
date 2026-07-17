@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\WorkspaceController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\JobApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bookmarks', [ProjectController::class, 'myBookmarks']);
 });
 
+
 // More route groups (profile, workspaces, jobs, etc.) will be added
 // here feature by feature, following the CreatorHub brief.
 
@@ -63,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
 });
+
 
 // Public - anyone can view another user's profile
 Route::get('/users/{user}', [ProfileController::class, 'showUser']);
@@ -94,3 +98,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
     Route::patch('/tasks/{task}/move', [TaskController::class, 'move']);
 });
+
+    Route::apiResource('jobs', JobController::class);
+
+Route::post('/jobs/{job}/apply',[
+    JobApplicationController::class,
+    'apply'
+]);
+
+Route::patch('/applications/{application}',[
+    JobApplicationController::class,
+    'updateStatus'
+]);
+});
+
